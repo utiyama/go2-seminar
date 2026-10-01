@@ -1,0 +1,34 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.coverage
+htmlcov/
+.cache/
+results/*
+!results/.gitkeep
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.env
+.env.*
+MUJOCO_LOG.TXT
+
+# Instructor materials are maintained separately.
+/instructor/
+/docs/validation*
+/scripts/prepare_textbook.py
+/scripts/render_snapshot.py
+/requirements.in
+/materials/textbook/upstream/
+/materials/textbook/*.json
+/materials/textbook/requirements.txt
+/materials/textbook/local/
+
+# Textbook PDFs are shared directly.
+*.[pP][dD][fF]

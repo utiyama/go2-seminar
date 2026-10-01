@@ -1,0 +1,47 @@
+name: Classroom checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  classroom:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    env:
+      PYTHONUTF8: "1"
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install and check (Windows student script)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: ./scripts/install.ps1
+      - name: Install and check (Unix student script)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: bash scripts/install.sh
+      - name: Test Windows
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: ./scripts/run.ps1 -m pytest --junitxml=results/junit.xml
+      - name: Test Unix
+        if: runner.os != 'Windows'
+        shell: bash
+        run: bash scripts/run.sh -m pytest --junitxml=results/junit.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: classroom-${{ matrix.os }}
+          path: results/

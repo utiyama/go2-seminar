@@ -32,5 +32,3 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run.ps1 exercises/
 2. 変更前後の図を比べ、同じ障害物が二重に見える理由を説明してください。
 
 距離はシミュレータ内のレイ計測で求めています。実機のLiDARやSLAMを再現したものではありません。
-
-実習の結果や疑問点は授業中に話し合います。提出物はありません。

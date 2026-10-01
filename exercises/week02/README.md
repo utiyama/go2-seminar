@@ -31,5 +31,3 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run.ps1 exercises/
 1. yawを0度、45度、90度に変え、前方1 mの点がworld座標でどこに来るか比べてください。コードでは `np.deg2rad()` でradに変換します。
 2. world座標からbody座標へ戻す変換を書いてください。
 3. 変換して戻した値が、元の座標と一致するか確かめてください。
-
-実習の結果や疑問点は授業中に話し合います。提出物はありません。

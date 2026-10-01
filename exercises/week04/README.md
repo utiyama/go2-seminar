@@ -33,5 +33,3 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run.ps1 exercises/
 3. 前進速度と、停止する距離のしきい値を変えて動作を比べてください。
 
 この回は平面移動モードです。障害物に触れても自動では止まらないため、距離を見て停止する処理が必要です。
-
-実習の結果や疑問点は授業中に話し合います。提出物はありません。

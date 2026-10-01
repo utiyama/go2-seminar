@@ -34,4 +34,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run.ps1 exercises/
 
 この回は平面移動モードです。障害物に触れても自動では止まらないため、距離を見て停止する処理が必要です。
 
-実習の結果や疑問点は授業中に話し合います。提出物はありません。記録を残したい場合は [notes.md](notes.md) を自由に使ってください。
+実習の結果や疑問点は授業中に話し合います。提出物はありません。

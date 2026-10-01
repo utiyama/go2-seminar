@@ -32,4 +32,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run.ps1 exercises/
 2. 同じ地図で経路長と展開ノード数を比べてください。
 3. ゴールに到達できない地図と、出発点がゴールと同じ場合でも試してください。
 
-実習の結果や疑問点は授業中に話し合います。提出物はありません。記録を残したい場合は [notes.md](notes.md) を自由に使ってください。
+実習の結果や疑問点は授業中に話し合います。提出物はありません。

@@ -80,7 +80,7 @@ robot.stop()
 | フォルダ | 内容 |
 |---|---|
 | `examples/` | 初回に使うサンプル |
-| `exercises/week01/` ～ `week07/` | 各回の説明、実習コード、自分用のメモ `notes.md`（任意） |
+| `exercises/week01/` ～ `week07/` | 各回の説明と実習コード |
 | `results/` | 実行結果のCSVや画像。同名のファイルは再実行時に上書きされます |
 | `docs/` | セットアップ手順、ゼミの進め方、APIの説明 |
 | `materials/textbook/` | 教科書の案内と読む範囲 |

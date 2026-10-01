@@ -25,16 +25,18 @@
 macOS:
 
 ```bash
-bash scripts/run.sh exercises/week01/starter.py
+bash scripts/run.sh exercises/week01/starter.py --viewer
 ```
 
 Windows:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run.ps1 exercises/week01/starter.py
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run.ps1 exercises/week01/starter.py --viewer
 ```
 
-結果は `results/` に保存されます。同じプログラムをもう一度実行すると上書きされるので、比較に使うファイルは先にコピーしてください。例えば、変更前を `results/week01-baseline.csv`、変更後を `results/week01-changed.csv` として残します。
+week01はGo2の動きと軌跡を画面に表示します。動作が終わったらウィンドウを閉じ、`results/week01.png` で位置と向きの変化も確認してください。保存済みのCSVを再生する方法は[week01の説明](../exercises/week01/README.md#すでに保存したcsvを見る)にあります。
+
+結果は `results/` に保存されます。同じプログラムをもう一度実行すると上書きされるので、比較に使うCSVや画像は先にコピーしてください。例えば、変更前を `results/week01-baseline.csv`、変更後を `results/week01-changed.csv` として残します。
 
 実行前の予想と実際の結果を比べ、気づいたことや疑問点を授業中に話し合います。うまく動かなかった場合も、試したことをその場で相談してください。
 

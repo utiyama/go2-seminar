@@ -14,11 +14,9 @@
 
 毎回の提出物はありません。実習で分かったことや疑問点は、授業中に話し合います。
 
-## 教材のダウンロード
+## 教材の取得
 
-GitHubの **Code → Download ZIP** からダウンロードし、ZIPを展開してください。中に `README.md`、`scripts`、`examples` があるフォルダを使います。
-
-Gitを使う場合は、次のコマンドでも取得できます。
+授業中の修正を取り込めるよう、Gitで教材を取得してください。ターミナル（Mac）またはPowerShell（Windows）で次を実行します。
 
 ```text
 git clone https://github.com/utiyama/go2-seminar.git
@@ -27,7 +25,11 @@ cd go2-seminar
 
 MacでGitが見つからないと表示される場合は、[Command Line Toolsの参照先を確認する手順](docs/troubleshooting.md#macでgitが見つからない場合)を参照してください。
 
-リポジトリは非公開です。GitHubで教員からの招待を承認してからアクセスしてください。GitHubを使わない人には、教材のZIPを配布します。
+WindowsでGitが見つからない場合は、[Git for Windows](https://gitforwindows.org/)をインストールし、PowerShellを開き直してください。
+
+このリポジトリは公開しています。教材の取得にはGitHubアカウントや招待は不要です。取得後は、各OSのセットアップ手順に進んでください。授業前の更新方法は[教材の更新](docs/student-guide.md#教材の更新)にあります。
+
+Gitの準備が間に合わない場合は、GitHubの **Code → Download ZIP** から取得して展開することもできます。ZIPで取得したフォルダはGitでは更新できないため、後でGitから取得し直してください。
 
 ## 実習に使う環境
 

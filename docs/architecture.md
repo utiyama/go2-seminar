@@ -49,6 +49,8 @@ IMUには、Menagerieモデルに追加したMuJoCoのgyroとaccelerometerを使
 
 ## 実習を組み合わせるには
 
+week01の `sequence.py` では、この教材用の `Action` と `SequenceController` を使います。`Action("名前", seconds=2, vx=0.2)` のように一定時間の速度指令を記述し、`SequenceController(actions, repeat=4)` を `runtime.run` の `control` に渡すと順に実行できます。指定しなかった速度は0、動作の時間は20 msの正の整数倍です。動作列の終了後は停止します。`repeat` は現在の位置・向きを保ったまま動作列を繰り返します。シミュレーションを途中から使う場合は、生成時に `start_time=robot.time` も指定します。
+
 week02の座標変換、week03のノイズ生成、week04の状態遷移を、それぞれ関数として取り出すと再利用しやすくなります。ノイズ生成ではseedも引数にしておくと、同じ条件で比較できます。
 
 week05の観測点をweek06の地図に載せるには、座標系と解像度をそろえる必要があります。機体の大きさを考慮した衝突判定は、経路計画の側に追加してください。さらにweek07を組み合わせる場合は、推定した位置を経路計画に渡し、シミュレータの真の位置は評価に使います。

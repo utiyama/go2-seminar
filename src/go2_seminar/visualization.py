@@ -94,7 +94,10 @@ def plot_planar_motion(states, path):
     yaw_ax.set(xlabel="simulation time [s]", ylabel="yaw [rad]", title="Heading over time")
     for ax in [path_ax, position_ax, yaw_ax]:
         ax.grid(alpha=0.3)
-        ax.legend(fontsize=8)
+    # Keep the legend outside the path so it cannot hide a corner or heading.
+    path_ax.legend(fontsize=8, loc="upper center", bbox_to_anchor=(0.5, -0.18), ncol=2)
+    position_ax.legend(fontsize=8)
+    yaw_ax.legend(fontsize=8)
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     try:

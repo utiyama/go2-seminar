@@ -73,3 +73,18 @@ def test_direct_pins_match_lock():
     lock = (ROOT / "requirements.txt").read_text()
     for requirement in project["dependencies"] + project["optional-dependencies"]["dev"]:
         assert requirement in lock
+
+
+def test_week01_sequence_entrypoint(tmp_path):
+    output = tmp_path / "sequence"
+    invoke("exercises/week01/sequence.py", "--viewer", "--headless",
+           "--target", "0.4", "0.2", "90", "--output", str(output))
+    with output.with_suffix(".csv").open() as stream:
+        rows = list(csv.DictReader(stream))
+    assert len(rows) == 350  # Five seconds of actions and two seconds stopped.
+    assert float(rows[-1]["x_m"]) == pytest.approx(.4)
+    assert float(rows[-1]["y_m"]) == pytest.approx(.2)
+    assert float(rows[-1]["yaw_rad"]) == pytest.approx(math.pi / 2)
+    assert float(rows[-1]["vx_world_m_s"]) == 0
+    assert float(rows[-1]["vy_world_m_s"]) == 0
+    assert output.with_suffix(".png").stat().st_size > 1000

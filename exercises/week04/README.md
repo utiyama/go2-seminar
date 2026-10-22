@@ -4,32 +4,53 @@
 
 教科書：11.1–11.3（抜粋版 42–50ページ）
 
-[教科書の案内](../../materials/textbook/README.md) ／ [ゼミの進め方](../../docs/student-guide.md)
+[教科書の案内](../../materials/textbook/README.md) ／ [ゼミの進め方](../../docs/student-guide.md) ／ [ROS 2環境](../../docs/setup-ros.md)
 
-前方の障害物までの距離を使って、前進と停止を切り替えます。状態を追加し、障害物の前で向きを変えてから進む動作を作ります。
+LiDARで測った前方の距離を使って、前進と停止を切り替えるノードを動かします。状態を追加して、障害物の前で向きを変えてから進む動作を作ります。実機が届いていれば、同じノードで実機も走らせます。
 
-## 実行方法
+## 準備
 
-教材の `README.md` があるフォルダから実行します。
+第3回と同じく、`pixi shell` に入ったターミナルを3つ使います。
 
-macOS:
+ターミナル1（シミュレータ）:
 
-```bash
-bash scripts/run.sh exercises/week04/starter.py
+```text
+python scripts/launch.py -m go2_seminar.ros.sim_bridge --viewer
 ```
 
-Windows:
+ターミナル2（RViz2）:
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run.ps1 exercises/week04/starter.py
+```text
+rviz2 -d exercises/ros/seminar.rviz
 ```
 
 ## 実習
 
-最初のコードは `FORWARD` から `STOP` への切り替えだけを行います。実行して、停止した時刻と距離、`results/week04.csv` を確認してください。
+ターミナル3で実行します。
 
-1. `TURN` 状態を追加し、停止後に旋回するようにしてください。
-2. 一定時間旋回したら `FORWARD` に戻るようにしてください。
-3. 前進速度と、停止する距離のしきい値を変えて動作を比べてください。
+```text
+python exercises/week04/fsm.py
+```
 
-この回は平面移動モードです。障害物に触れても自動では止まらないため、距離を見て停止する処理が必要です。
+最初のコードは `FORWARD` から `STOP` への切り替えだけを行います。前方0.5 m以内に何かがあると停止します。ターミナルに状態が変わった時刻と距離が表示されます。`Ctrl+C` で終了すると、`results/week04-fsm.csv` と `results/week04-fsm.png` に、前方距離の変化とオドメトリの軌跡が保存されます。
+
+1. 実行して、停止した時刻と距離を確認してください。停止距離を0.5 mにしているのに、記録された距離が0.5 mより小さいのはなぜでしょうか。`--speed` を0.05と0.22に変えて比べてください。
+2. `Controller` に `TURN` 状態を追加してください。`STOP` になったら `TURN` に移り、`turn_seconds` だけ旋回したら `FORWARD` に戻します。`update()` には時刻 `t` が渡されるので、`state_since` との差で経過時間が分かります。
+3. 2ができたら、部屋の中で走らせ続けてください。旋回の角度（`--turn-rate` × `--turn-seconds`）を変えると、ロボットが通る場所はどう変わるでしょうか。RViz2の軌跡と保存した図で比べます。
+4. `left` と `right` の距離も `update()` に渡されています。前方がふさがれたとき、空いている側へ旋回するようにしてください。
+
+実行前に、ロボットがどこで止まり、どちらに曲がるかを予想してから動かしてください。
+
+## 発展：壁に沿って走る
+
+左の距離を一定（例えば0.5 m）に保つように、旋回速度を `左の距離 − 0.5` に比例させてみてください。状態は `FORWARD` のまま、旋回速度だけを変えます。比例の係数を大きくしすぎると、どうなるでしょうか。
+
+## 実機では
+
+実機の `/scan` には雑音や欠測があります。1回の計測で状態を切り替えると、ばたつくことがあります。第3回で作った平均化や、「連続して何回か条件を満たしたら遷移する」工夫を入れてみてください。
+
+ROS環境が使えない場合は、MuJoCoだけで同じ内容を試す `starter.py` もあります。
+
+```text
+python scripts/launch.py exercises/week04/starter.py
+```

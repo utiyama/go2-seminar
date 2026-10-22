@@ -26,11 +26,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run.ps1 exercises/
 
 ## 実習
 
-実行すると、変換前後の座標が表示され、`results/week02.png` に図が保存されます。
+実行すると、body座標の3点（原点、前方1 m、左0.5 m）とそのworld座標が表示され、`results/week02.png` に図が保存されます。最初の状態では、最後に「往復の結果が元のbody座標と一致しません」と出ます。
 
-1. yawを0度、45度、90度に変え、前方1 mの点がworld座標でどこに来るか比べてください。コードでは `np.deg2rad()` でradに変換します。
-2. world座標からbody座標へ戻す変換を書いてください。
-3. 変換して戻した値が、元の座標と一致するか確かめてください。
+1. `starter.py` の `robot.set_planar_pose(0.5, 0.2, np.deg2rad(45))` の角度を0度、45度、90度に変え、前方1 mの点がworld座標でどこに来るか比べてください。コードでは `np.deg2rad()` でradに変換します。
+2. `starter.py` の上の方にある関数 `world_to_body()` を完成させてください。いまは受け取った値をそのまま返しています。`body_to_world()` の逆の計算で、先に位置を引いてから、向きの分だけ逆向きに回転します。`body_to_world()` の中身は `src/go2_seminar/runtime.py` の末尾にあります。
+3. 実行して「往復の結果が元のbody座標と一致しました」と表示されることを確かめてください。確認には `np.allclose()` を使っています。角度を変えても一致するか試してください。
 
 ## ROSで使う座標系
 

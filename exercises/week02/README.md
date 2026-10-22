@@ -38,4 +38,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run.ps1 exercises/
 
 ROSでは、この回のworld座標にあたる座標系を `odom` や `map`、body座標にあたる座標系を `base_link` と呼びます。LiDARの取り付け位置を表す `base_scan` もあります。今回書いた変換と同じ計算を、ROSでは `tf2` が座標系どうしの関係として管理します。LiDARで測った点を地図に載せるには、`base_scan` から `base_link`、さらに `odom` へと変換を重ねることになります。
 
-次回までに[ROS 2環境のセットアップ](../../docs/setup-ros.md)を済ませておいてください。講義室ではインターネットが使えないことがあるため、授業前に自宅や学内で行います。
+次回までに[ROS 2環境のセットアップ](../../docs/setup-ros.md)を済ませておいてください。数GBのダウンロードがあるので、授業中に行うと実習の時間がなくなります。

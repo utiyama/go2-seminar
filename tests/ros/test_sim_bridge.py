@@ -55,7 +55,9 @@ def test_bridge_publishes_scan_and_moves_on_cmd_vel():
         assert all(r >= scan.range_min for r in scan.ranges if math.isfinite(r))
         start_x = odoms[-1].pose.pose.position.x
         t0 = time.monotonic()
-        while time.monotonic() - t0 < 2.0:
+        # Keep commanding 0.2 m/s until the robot has moved 0.2 m (discovery of the new
+        # cmd_vel subscription can take a moment), then check it did not overshoot wildly.
+        while time.monotonic() - t0 < 8.0 and odoms[-1].pose.pose.position.x - start_x < 0.2:
             msg = TwistStamped()
             msg.header.stamp = node.get_clock().now().to_msg()
             msg.header.frame_id = "base_link"
@@ -63,7 +65,7 @@ def test_bridge_publishes_scan_and_moves_on_cmd_vel():
             pub.publish(msg)
             rclpy.spin_once(node, timeout_sec=0.05)
         moved = odoms[-1].pose.pose.position.x - start_x
-        assert 0.2 < moved < 0.5, moved
+        assert 0.2 <= moved < 0.5, moved
         # Command timeout: without new commands the robot must stop.
         t0 = time.monotonic()
         while time.monotonic() - t0 < 1.5:

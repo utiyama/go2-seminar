@@ -26,7 +26,7 @@ def main():
         if not (report["ros_domain_id"] or "").isdigit():
             raise RuntimeError("ROS_DOMAIN_ID is not set; the activation script did not run")
         report["cyclonedds_uri"] = os.environ.get("CYCLONEDDS_URI")
-        uri = report["cyclonedds_uri"] or ""
+        uri = (report["cyclonedds_uri"] or "").split(",")[0]  # Windows appends an inline fragment
         if not uri.startswith("file://") or not Path(uri[len("file://"):]).is_file():
             raise RuntimeError("CYCLONEDDS_URI does not point to scripts/cyclonedds*.xml")
         report["robot_mode"] = uri.endswith("cyclonedds-robot.xml")

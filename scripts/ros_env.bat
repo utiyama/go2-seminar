@@ -1,15 +1,15 @@
 @echo off
-rem Run by pixi on activation (Windows). Chooses the Cyclone DDS config file.
-rem "pixi run robot on" creates .ros_robot, which adds the TurtleBot3 as a peer.
-rem On Windows, Cyclone cannot send to 127.0.0.1 from a socket bound to the network
-rem adapter, so this PC's own name (which resolves to the adapter address) is added as a
-rem peer through an inline config fragment appended after the file.
+rem Run by pixi on activation (Windows). Chooses the ROS domain and the Cyclone DDS config.
+rem "pixi run robot on" creates .ros_robot: domain 30 and the robot as a discovery peer.
+rem Otherwise the domain is derived from the computer name (31..130) so that Windows PCs on
+rem the same Wi-Fi do not see each other's simulators (discovery uses multicast on Windows).
 set "_root=%PIXI_PROJECT_ROOT:\=/%"
 if exist "%PIXI_PROJECT_ROOT%\.ros_robot" (
-  set "_file=cyclonedds-robot.xml"
+  set "ROS_DOMAIN_ID=30"
+  set "CYCLONEDDS_URI=file://%_root%/scripts/cyclonedds-windows-robot.xml"
 ) else (
-  set "_file=cyclonedds.xml"
+  for /f %%i in ('powershell -NoProfile -Command "$s=0; foreach($c in [char[]]$env:COMPUTERNAME){$s+=[int]$c}; 31 + ($s %% 100)"') do set "ROS_DOMAIN_ID=%%i"
+  set "CYCLONEDDS_URI=file://%_root%/scripts/cyclonedds-windows.xml"
 )
-set "CYCLONEDDS_URI=file://%_root%/scripts/%_file%,<CycloneDDS><Domain Id='any'><Discovery><Peers><Peer address='%COMPUTERNAME%'/></Peers></Discovery></Domain></CycloneDDS>"
+if "%ROS_DOMAIN_ID%"=="" set "ROS_DOMAIN_ID=30"
 set "_root="
-set "_file="

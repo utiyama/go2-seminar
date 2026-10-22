@@ -70,8 +70,8 @@ python scripts/launch.py exercises/week01/starter.py --viewer
 | 設定 | 値 | 意味 |
 |---|---|---|
 | `RMW_IMPLEMENTATION` | `rmw_cyclonedds_cpp` | 通信にCyclone DDSを使います。既定のFast DDSはMacで止まることがあります |
-| `ROS_DOMAIN_ID` | `30` | 授業で使うドメイン番号。ロボット側も同じです |
-| `CYCLONEDDS_URI` | `scripts/cyclonedds.xml` | マルチキャストを使わず、自分のPC内だけを相手に探索します。隣の人のシミュレータとは混ざりません |
+| `ROS_DOMAIN_ID` | `30`（Windowsは実機接続時以外、PCごとの番号） | 同じ番号のPCどうしだけが通信します。ロボットは30です |
+| `CYCLONEDDS_URI` | `scripts/cyclonedds.xml` など | 自分のPC内だけを相手に探索する設定です。隣の人のシミュレータとは混ざりません。Windowsは `cyclonedds-windows.xml` を使います |
 
 ## 実機に接続するとき
 
@@ -81,7 +81,7 @@ python scripts/launch.py exercises/week01/starter.py --viewer
 pixi run robot on
 ```
 
-次に `pixi shell` に入ったときから、ロボット（`turtlebot.local`）も探索の相手に含む `scripts/cyclonedds-robot.xml` が使われます。すでに開いているターミナルには反映されないので、`exit` してから `pixi shell` に入り直してください。`ros2 topic hz /scan` でロボットの値が届けば接続できています。
+次に `pixi shell` に入ったときから、ドメイン番号が30になり、ロボット（`turtlebot.local`）も探索の相手に含む設定（`scripts/cyclonedds-robot.xml`、Windowsは `cyclonedds-windows-robot.xml`）が使われます。すでに開いているターミナルには反映されないので、`exit` してから `pixi shell` に入り直してください。`ros2 topic hz /scan` でロボットの値が届けば接続できています。
 
 終わったら次で戻します。戻し忘れると、ロボットがいないときにノードの起動が数秒遅くなります。
 

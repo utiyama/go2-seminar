@@ -58,41 +58,6 @@ jobs:
               print(out); print(err); print("TIMEOUT after 120 s")
           PY
           pixi run python /tmp/diag.py
-      - name: Network diagnostics (Windows, two-process discovery trace)
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: |
-          ipconfig | Select-String -Pattern "adapter|IPv4"
-          hostname
-          @'
-          import os, subprocess, sys, time, re
-          os.environ["CYCLONEDDS_URI"] = os.environ.get("CYCLONEDDS_URI", "") + ",<CycloneDDS><Domain><Tracing><Verbosity>fine</Verbosity><OutputFile>stderr</OutputFile></Tracing></Domain></CycloneDDS>"
-          print("URI:", os.environ["CYCLONEDDS_URI"])
-          code = '''
-          import rclpy, time, sys
-          from std_msgs.msg import String
-          rclpy.init(); n = rclpy.create_node(sys.argv[1]); got = []
-          if sys.argv[1] == "pub":
-              p = n.create_publisher(String, "/d", 10); t0 = time.time()
-              while time.time() - t0 < 14: p.publish(String(data="x")); rclpy.spin_once(n, timeout_sec=0.05)
-          else:
-              n.create_subscription(String, "/d", lambda m: got.append(1), 10); t0 = time.time()
-              while time.time() - t0 < 10 and not got: rclpy.spin_once(n, timeout_sec=0.05)
-              print("SUB RESULT:", "received" if got else "nothing", "after", round(time.time()-t0, 2), "s")
-          '''
-          pub = subprocess.Popen([sys.executable, "-c", code, "pub"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-          time.sleep(3)
-          sub = subprocess.run([sys.executable, "-c", code, "sub"], capture_output=True, text=True, timeout=60)
-          pub_out, pub_err = pub.communicate(timeout=60)
-          print(sub.stdout)
-          pat = re.compile(r"interfaces:|selected|peer|Peer|spdp|SPDP|fail|error|ownip|udp/|participant", re.I)
-          for name, err in [("SUB", sub.stderr), ("PUB", pub_err)]:
-              lines = [l for l in err.splitlines() if pat.search(l) and "config:" not in l]
-              print(f"--- {name} trace ({len(lines)} matching lines, first 60)")
-              print("\n".join(lines[:60]))
-          '@ | Set-Content -Path $env:TEMP\diag_dds.py -Encoding UTF8
-          pixi install
-          pixi run python $env:TEMP\diag_dds.py
       - name: Install and check (Windows student script)
         if: runner.os == 'Windows'
         shell: powershell

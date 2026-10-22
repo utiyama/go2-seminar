@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Cyclone DDS settings used on Windows when "pixi run robot on" is set (ROS_DOMAIN_ID 30).
+     Same as cyclonedds-windows.xml plus the robot as a unicast discovery peer. The robot's
+     Raspberry Pi is named "turtlebot"; if turtlebot.local does not resolve on your PC, add a
+     line with the IP address the instructor gives you, e.g. <Peer address="192.168.8.100"/>. -->
+<CycloneDDS xmlns="https://cdds.io/config">
+  <Domain Id="any">
+    <General>
+      <AllowMulticast>spdp</AllowMulticast>
+    </General>
+    <Discovery>
+      <Peers>
+        <Peer address="turtlebot.local"/>
+      </Peers>
+    </Discovery>
+  </Domain>
+</CycloneDDS>

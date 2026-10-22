@@ -29,7 +29,7 @@ def main():
         uri = (report["cyclonedds_uri"] or "").split(",")[0]  # Windows appends an inline fragment
         if not uri.startswith("file://") or not Path(uri[len("file://"):]).is_file():
             raise RuntimeError("CYCLONEDDS_URI does not point to scripts/cyclonedds*.xml")
-        report["robot_mode"] = uri.endswith("cyclonedds-robot.xml")
+        report["robot_mode"] = uri.endswith("-robot.xml")
         if report["ros_distro"] != "jazzy":
             raise RuntimeError("ROS_DISTRO is not 'jazzy'; run inside the pixi environment")
         if report["rmw_env"] != "rmw_cyclonedds_cpp":

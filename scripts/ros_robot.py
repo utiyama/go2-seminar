@@ -15,13 +15,15 @@ def main(argv):
     command = argv[0] if argv else "status"
     if command == "on":
         FLAG.write_text("on\n", encoding="utf-8")
-        print("実機接続: on（scripts/cyclonedds-robot.xml を使います）")
+        print("実機接続: on（ドメイン30、ロボットを探索の相手に含めます）")
     elif command == "off":
         FLAG.unlink(missing_ok=True)
-        print("実機接続: off（scripts/cyclonedds.xml を使います）")
+        print("実機接続: off（自分のPC内だけを探索します）")
     elif command == "status":
-        uri = os.environ.get("CYCLONEDDS_URI", "(未設定)")
-        print(f"保存されている設定: {'on' if FLAG.exists() else 'off'}  このターミナルの設定: {uri}")
+        uri = os.environ.get("CYCLONEDDS_URI", "(未設定)").split("/")[-1]
+        domain = os.environ.get("ROS_DOMAIN_ID", "(未設定)")
+        print(f"保存されている設定: {'on' if FLAG.exists() else 'off'}  "
+              f"このターミナル: ROS_DOMAIN_ID={domain}, 設定ファイル={uri}")
         return 0
     else:
         print("使い方: pixi run robot on | off | status", file=sys.stderr)

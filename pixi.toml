@@ -21,17 +21,16 @@ mujoco-menagerie = "==2026.9.0"
 go2-seminar = { path = ".", editable = true }
 
 [activation]
-# 実機接続の切り替え（pixi run robot on/off）に応じて Cyclone DDS の設定ファイルを選びます。
+# 実機接続の切り替え（pixi run robot on/off）に応じて、ドメインと Cyclone DDS の設定ファイルを選びます。
 scripts = ["scripts/ros_env.sh"]
 
 [target.win-64.activation]
 scripts = ["scripts/ros_env.bat"]
 
 [activation.env]
-# 授業では Cyclone DDS、ドメイン 30 に統一します。ロボット側も同じ設定です。
-# マルチキャストは使わず（scripts/cyclonedds*.xml）、自分のPCとロボットだけを探索します。
+# 授業では Cyclone DDS に統一します。ROS_DOMAIN_ID と CYCLONEDDS_URI は上の activation
+# スクリプトが設定します（ロボットは 30、scripts/cyclonedds*.xml を参照）。
 RMW_IMPLEMENTATION = "rmw_cyclonedds_cpp"
-ROS_DOMAIN_ID = "30"
 ROS_AUTOMATIC_DISCOVERY_RANGE = "SUBNET"
 PYTHONUTF8 = "1"
 

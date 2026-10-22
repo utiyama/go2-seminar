@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Cyclone DDS settings for simulator work on Windows (pixi activation selects this file).
+     On Windows several processes can end up with the same DDS participant index, so unicast
+     discovery between them fails; multicast is therefore kept for discovery only (spdp) and
+     user data stays unicast. To keep one PC's simulator separate from other Windows PCs on the
+     same Wi-Fi, the activation script also derives ROS_DOMAIN_ID from the computer name. -->
+<CycloneDDS xmlns="https://cdds.io/config">
+  <Domain Id="any">
+    <General>
+      <AllowMulticast>spdp</AllowMulticast>
+    </General>
+  </Domain>
+</CycloneDDS>

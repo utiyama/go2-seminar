@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Cyclone DDS settings for simulator work (pixi activation sets CYCLONEDDS_URI to this file
+     unless ROS_DOMAIN_ID is 30, the robot domain, which uses cyclonedds-robot.xml instead).
+     Multicast is disabled because classroom Wi-Fi and some virtual network adapters drop it;
+     discovery uses unicast to the peers below. "localhost" covers the simulator on this PC. -->
+<CycloneDDS xmlns="https://cdds.io/config">
+  <Domain Id="any">
+    <General>
+      <AllowMulticast>false</AllowMulticast>
+    </General>
+    <Discovery>
+      <Peers>
+        <Peer address="localhost"/>
+      </Peers>
+    </Discovery>
+  </Domain>
+</CycloneDDS>

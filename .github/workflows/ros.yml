@@ -40,7 +40,7 @@ jobs:
         with:
           pixi-version: v0.82.1
           cache: true   # setup-pixi installs the environment; the student scripts then re-run pixi install as a no-op
-      - name: Network diagnostics (Unix)
+      - name: Network diagnostics (Unix, time-limited check)
         if: runner.os != 'Windows'
         shell: bash
         run: |
@@ -57,7 +57,6 @@ jobs:
               err = (e.stderr or b"")[-6000:] if isinstance(e.stderr, bytes) else (e.stderr or "")[-6000:]
               print(out); print(err); print("TIMEOUT after 120 s")
           PY
-          export CYCLONEDDS_URI='<CycloneDDS><Domain><Tracing><Verbosity>config</Verbosity><OutputFile>stderr</OutputFile></Tracing></Domain></CycloneDDS>'
           pixi run python /tmp/diag.py
       - name: Install and check (Windows student script)
         if: runner.os == 'Windows'

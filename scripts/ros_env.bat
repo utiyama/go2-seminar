@@ -1,7 +1,10 @@
 @echo off
-rem Run by pixi on activation (Windows). Sets the ROS domain from .ros_domain_id.
-if exist "%PIXI_PROJECT_ROOT%\.ros_domain_id" (
-  set /p ROS_DOMAIN_ID=<"%PIXI_PROJECT_ROOT%\.ros_domain_id"
+rem Run by pixi on activation (Windows). Chooses the Cyclone DDS config file.
+rem "pixi run robot on" creates .ros_robot, which adds the TurtleBot3 as a peer.
+set "_root=%PIXI_PROJECT_ROOT:\=/%"
+if exist "%PIXI_PROJECT_ROOT%\.ros_robot" (
+  set "CYCLONEDDS_URI=file://%_root%/scripts/cyclonedds-robot.xml"
+) else (
+  set "CYCLONEDDS_URI=file://%_root%/scripts/cyclonedds.xml"
 )
-if "%ROS_DOMAIN_ID%"=="" set ROS_DOMAIN_ID=30
-set ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+set "_root="

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Cyclone DDS settings used when ROS_DOMAIN_ID is 30 (driving the real TurtleBot3).
+     Same as cyclonedds.xml plus the robot as a unicast discovery peer. The robot's Raspberry Pi
+     is named "turtlebot"; if turtlebot.local does not resolve on your PC, add a line with the
+     IP address the instructor gives you, e.g. <Peer address="192.168.8.100"/>.
+     Looking up a name that does not exist delays start-up by several seconds, so this file is
+     only used in the robot domain. -->
+<CycloneDDS xmlns="https://cdds.io/config">
+  <Domain Id="any">
+    <General>
+      <AllowMulticast>false</AllowMulticast>
+    </General>
+    <Discovery>
+      <Peers>
+        <Peer address="localhost"/>
+        <Peer address="turtlebot.local"/>
+      </Peers>
+    </Discovery>
+  </Domain>
+</CycloneDDS>

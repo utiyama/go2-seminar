@@ -71,6 +71,7 @@ git --version
 | ノードの起動やトピックの表示が返ってこない | 既定のFast DDSに切り替わっていないか確認します。`pixi shell` の中では `RMW_IMPLEMENTATION` が `rmw_cyclonedds_cpp` になります。`echo $RMW_IMPLEMENTATION`（Windowsは `$env:RMW_IMPLEMENTATION`）で確認してください |
 | Windowsでファイアウォールの許可を求められる | 「プライベートネットワーク」で許可してください。実機との通信に必要です |
 | Macで「ローカルネットワーク上のデバイスの検索」の許可を求められる | 許可してください。実機との通信に必要です |
-| 隣の人のトピックが見える、ロボットが2台見える | ドメイン番号が同じです。`pixi run domain` で自分の番号を確認し、教員から割り当てられた番号に変えてから `pixi shell` に入り直してください |
-| `pixi run domain` で変えたのに番号が変わらない | 設定は `pixi shell` に入るときに読まれます。開いているターミナルで `exit` し、もう一度 `pixi shell` を実行してください |
+| `pixi run robot on` にしたのに実機が見えない | 設定は `pixi shell` に入るときに読まれます。開いているターミナルで `exit` し、もう一度 `pixi shell` を実行してください |
+| 実機の `/scan` が届かない | ロボットと同じWi-Fiにつながっているか、`pixi run robot status` が on か確認します。`ping turtlebot.local` が通らない場合は、教員からロボットのIPアドレスを聞き、`scripts/cyclonedds-robot.xml` の `Peer` に1行追加してから `pixi shell` に入り直します |
+| ノードの起動や最初の受信に5秒ほどかかる | `pixi run robot on` のままだと、ロボットの名前解決を待ちます。シミュレータだけのときは `pixi run robot off` にしてください |
 | ROS環境を作り直したい | 教材フォルダの `.pixi` を削除し、インストールをやり直します。`.venv` には影響しません |

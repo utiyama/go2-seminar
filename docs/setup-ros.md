@@ -70,26 +70,26 @@ python scripts/launch.py exercises/week01/starter.py --viewer
 | 設定 | 値 | 意味 |
 |---|---|---|
 | `RMW_IMPLEMENTATION` | `rmw_cyclonedds_cpp` | 通信にCyclone DDSを使います。既定のFast DDSはMacで止まることがあります |
-| `ROS_DOMAIN_ID` | 既定は `30` | 同じ番号のPCどうしだけが通信します。授業では各自に別の番号を割り当てます |
-| `ROS_AUTOMATIC_DISCOVERY_RANGE` | `SUBNET` | 同じネットワーク内の同じ番号のPCと通信します |
+| `ROS_DOMAIN_ID` | `30` | 授業で使うドメイン番号。ロボット側も同じです |
+| `CYCLONEDDS_URI` | `scripts/cyclonedds.xml` | マルチキャストを使わず、自分のPC内だけを相手に探索します。隣の人のシミュレータとは混ざりません |
 
-## ドメイン番号の設定
+## 実機に接続するとき
 
-同じWi-FiにつないだPCが同じ番号を使うと、互いのシミュレータの話題が混ざります。授業では教員が各自の番号（31〜34）を伝えるので、教材のフォルダで一度だけ次を実行してください。
-
-```text
-pixi run domain 31
-```
-
-番号は教材フォルダの `.ros_domain_id` に保存され、以後 `pixi shell` に入るたびに自動で使われます。すでに開いているターミナルには反映されないので、`exit` してから `pixi shell` に入り直してください。現在の値は `pixi run domain` で確認できます。
-
-実機を動かす番になったら、ロボットと同じ `30` に切り替えます。
+ロボットを動かす番になったら、教員が用意したWi-Fiに接続し、教材のフォルダで次を実行します。
 
 ```text
-pixi run domain 30
+pixi run robot on
 ```
 
-終わったら自分の番号に戻してください。ロボットを操作するPCは1台ずつです。
+次に `pixi shell` に入ったときから、ロボット（`turtlebot.local`）も探索の相手に含む `scripts/cyclonedds-robot.xml` が使われます。すでに開いているターミナルには反映されないので、`exit` してから `pixi shell` に入り直してください。`ros2 topic hz /scan` でロボットの値が届けば接続できています。
+
+終わったら次で戻します。戻し忘れると、ロボットがいないときにノードの起動が数秒遅くなります。
+
+```text
+pixi run robot off
+```
+
+現在の設定は `pixi run robot status` で確認できます。ロボットに指令を送るPCは1台ずつです。
 
 ## 環境を作り直すとき
 

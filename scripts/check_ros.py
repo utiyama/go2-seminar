@@ -22,6 +22,9 @@ def main():
         report["ros_distro"] = os.environ.get("ROS_DISTRO")
         report["rmw_env"] = os.environ.get("RMW_IMPLEMENTATION")
         report["ros_domain_id"] = os.environ.get("ROS_DOMAIN_ID")
+        report["discovery_range"] = os.environ.get("ROS_AUTOMATIC_DISCOVERY_RANGE")
+        if not (report["ros_domain_id"] or "").isdigit():
+            raise RuntimeError("ROS_DOMAIN_ID is not set; the activation script did not run")
         if report["ros_distro"] != "jazzy":
             raise RuntimeError("ROS_DISTRO is not 'jazzy'; run inside the pixi environment")
         if report["rmw_env"] != "rmw_cyclonedds_cpp":

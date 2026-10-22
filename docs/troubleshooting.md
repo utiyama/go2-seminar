@@ -71,5 +71,6 @@ git --version
 | ノードの起動やトピックの表示が返ってこない | 既定のFast DDSに切り替わっていないか確認します。`pixi shell` の中では `RMW_IMPLEMENTATION` が `rmw_cyclonedds_cpp` になります。`echo $RMW_IMPLEMENTATION`（Windowsは `$env:RMW_IMPLEMENTATION`）で確認してください |
 | Windowsでファイアウォールの許可を求められる | 「プライベートネットワーク」で許可してください。実機との通信に必要です |
 | Macで「ローカルネットワーク上のデバイスの検索」の許可を求められる | 許可してください。実機との通信に必要です |
-| 隣の人のトピックが見える | 既定では自分のPC内だけで通信します。`ROS_AUTOMATIC_DISCOVERY_RANGE` を `SUBNET` に変えたターミナルを閉じるか、`LOCALHOST` に戻してください |
+| 隣の人のトピックが見える、ロボットが2台見える | ドメイン番号が同じです。`pixi run domain` で自分の番号を確認し、教員から割り当てられた番号に変えてから `pixi shell` に入り直してください |
+| `pixi run domain` で変えたのに番号が変わらない | 設定は `pixi shell` に入るときに読まれます。開いているターミナルで `exit` し、もう一度 `pixi shell` を実行してください |
 | ROS環境を作り直したい | 教材フォルダの `.pixi` を削除し、インストールをやり直します。`.venv` には影響しません |

@@ -70,16 +70,26 @@ python scripts/launch.py exercises/week01/starter.py --viewer
 | 設定 | 値 | 意味 |
 |---|---|---|
 | `RMW_IMPLEMENTATION` | `rmw_cyclonedds_cpp` | 通信にCyclone DDSを使います。既定のFast DDSはMacで止まることがあります |
-| `ROS_DOMAIN_ID` | `30` | 授業で使うドメイン番号。ロボット側も同じです |
-| `ROS_AUTOMATIC_DISCOVERY_RANGE` | `LOCALHOST` | 自分のPC内だけで通信します。隣の人のシミュレータとは混ざりません |
+| `ROS_DOMAIN_ID` | 既定は `30` | 同じ番号のPCどうしだけが通信します。授業では各自に別の番号を割り当てます |
+| `ROS_AUTOMATIC_DISCOVERY_RANGE` | `SUBNET` | 同じネットワーク内の同じ番号のPCと通信します |
 
-実機を動かす回は、教員が用意したWi-Fiに接続し、ロボットを操作するPCだけ次のように切り替えます。
+## ドメイン番号の設定
+
+同じWi-FiにつないだPCが同じ番号を使うと、互いのシミュレータの話題が混ざります。授業では教員が各自の番号（31〜34）を伝えるので、教材のフォルダで一度だけ次を実行してください。
 
 ```text
-export ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+pixi run domain 31
 ```
 
-Windows（PowerShell）では `$env:ROS_AUTOMATIC_DISCOVERY_RANGE = "SUBNET"` です。この切り替えは、そのターミナルの中だけで有効です。
+番号は教材フォルダの `.ros_domain_id` に保存され、以後 `pixi shell` に入るたびに自動で使われます。すでに開いているターミナルには反映されないので、`exit` してから `pixi shell` に入り直してください。現在の値は `pixi run domain` で確認できます。
+
+実機を動かす番になったら、ロボットと同じ `30` に切り替えます。
+
+```text
+pixi run domain 30
+```
+
+終わったら自分の番号に戻してください。ロボットを操作するPCは1台ずつです。
 
 ## 環境を作り直すとき
 

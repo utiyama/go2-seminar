@@ -30,7 +30,7 @@ jobs:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 45
+    timeout-minutes: 30
     env:
       PYTHONUTF8: "1"
       MPLBACKEND: Agg
@@ -40,6 +40,25 @@ jobs:
         with:
           pixi-version: v0.82.1
           cache: true   # setup-pixi installs the environment; the student scripts then re-run pixi install as a no-op
+      - name: Network diagnostics (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          (ifconfig || ip addr) | grep -E "^[a-z0-9]+:|inet " || true
+          pixi install
+          cat > /tmp/diag.py <<'PY'
+          import subprocess, sys
+          try:
+              r = subprocess.run([sys.executable, "scripts/check_ros.py", "--output", "results/diag.json"],
+                                 timeout=120, capture_output=True, text=True)
+              print(r.stdout[-3000:]); print(r.stderr[-6000:]); print("exit", r.returncode)
+          except subprocess.TimeoutExpired as e:
+              out = (e.stdout or b"")[-3000:] if isinstance(e.stdout, bytes) else (e.stdout or "")[-3000:]
+              err = (e.stderr or b"")[-6000:] if isinstance(e.stderr, bytes) else (e.stderr or "")[-6000:]
+              print(out); print(err); print("TIMEOUT after 120 s")
+          PY
+          export CYCLONEDDS_URI='<CycloneDDS><Domain><Tracing><Verbosity>config</Verbosity><OutputFile>stderr</OutputFile></Tracing></Domain></CycloneDDS>'
+          pixi run python /tmp/diag.py
       - name: Install and check (Windows student script)
         if: runner.os == 'Windows'
         shell: powershell

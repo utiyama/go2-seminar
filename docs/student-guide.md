@@ -18,7 +18,7 @@
 
 ## 実習
 
-各回の `starter.py` をそのまま実行し、最初の結果を保存します。続いてREADMEの課題に沿ってコードを変更し、結果がどう変わるか調べてください。コード中の `TODO` は、変更する箇所の目印です。
+各回のREADMEにある最初のコードをそのまま実行し、最初の結果を保存します。続いてREADMEの課題に沿ってコードを変更し、結果がどう変わるか調べてください。コード中の `TODO` は、変更する箇所の目印です。
 
 コマンドは `README.md` があるフォルダから実行します。week01の場合は次のとおりです。
 
@@ -35,6 +35,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run.ps1 exercises/
 ```
 
 week01はGo2の動きと軌跡を画面に表示します。動作が終わったらウィンドウを閉じ、`results/week01.png` で位置と向きの変化も確認してください。保存済みのCSVを再生する方法は[week01の説明](../exercises/week01/README.md#すでに保存したcsvを見る)にあります。
+
+第3回以降は、[ROS 2環境](setup-ros.md)で実習します。コマンドは `pixi shell` で環境に入ってから実行します。各回のREADMEに実行方法があります。
 
 結果は `results/` に保存されます。同じプログラムをもう一度実行すると上書きされるので、比較に使うCSVや画像は先にコピーしてください。例えば、変更前を `results/week01-baseline.csv`、変更後を `results/week01-changed.csv` として残します。
 

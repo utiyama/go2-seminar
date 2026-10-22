@@ -69,10 +69,14 @@ def test_week01_headless_override_and_csv_replay():
 
 
 def test_direct_pins_match_lock():
+    """Exact pins must appear verbatim in the lock; ranges must at least be locked by name."""
     project = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]
     lock = (ROOT / "requirements.txt").read_text()
     for requirement in project["dependencies"] + project["optional-dependencies"]["dev"]:
-        assert requirement in lock
+        name = requirement.split("=")[0].split(">")[0].split("<")[0].strip()
+        assert f"\n{name}==" in "\n" + lock, requirement
+        if requirement.startswith(f"{name}=="):
+            assert requirement in lock
 
 
 def test_week01_sequence_entrypoint(tmp_path):

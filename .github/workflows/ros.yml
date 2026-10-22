@@ -1,0 +1,58 @@
+name: ROS environment checks
+on:
+  push:
+    paths:
+      - pixi.toml
+      - pixi.lock
+      - scripts/check_ros.py
+      - scripts/install-ros.*
+      - .github/workflows/ros.yml
+      - src/**
+      - tests/**
+  pull_request:
+    paths:
+      - pixi.toml
+      - pixi.lock
+      - scripts/check_ros.py
+      - scripts/install-ros.*
+      - .github/workflows/ros.yml
+      - src/**
+      - tests/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ros:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    env:
+      PYTHONUTF8: "1"
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.11.2
+        with:
+          pixi-version: v0.82.1
+          run-install: false
+          cache: true
+      - name: Install and check (Windows student script)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: ./scripts/install-ros.ps1
+      - name: Install and check (Unix student script)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: bash scripts/install-ros.sh
+      - name: Run the exercise tests inside the ROS environment
+        run: pixi run test --junitxml=results/ros-junit.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ros-${{ matrix.os }}
+          path: results/

@@ -9,11 +9,13 @@ description = "Windows/macOS classroom exercises with MuJoCo Menagerie Unitree G
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
 license = "MIT"
+# The classroom .venv is pinned by requirements.txt (hashes). These ranges also allow
+# the ROS 2 environment (pixi.toml), where ROS pins numpy 1.26 and matplotlib differs.
 dependencies = [
   "mujoco==3.3.7",
   "mujoco-menagerie==2026.9.0",
-  "numpy==2.2.6",
-  "matplotlib==3.10.6",
+  "numpy>=1.26,<3",
+  "matplotlib>=3.9",
 ]
 
 [project.optional-dependencies]

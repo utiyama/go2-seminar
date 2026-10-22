@@ -17,7 +17,7 @@
 
 | API | 動作 |
 |---|---|
-| `Go2Sim(mode='physics', obstacles=False, cache_dir=None)` | 固定した版のモデルを読み込みます。`obstacles=True` の場合はx=1.5に箱を追加します |
+| `Go2Sim(mode='physics', obstacles=False, cache_dir=None)` | 固定した版のモデルを読み込みます。`obstacles=True` の場合はx=1.5に箱を追加します。`obstacles='room'` では、その箱に加えて4 m×3 mの壁と2つの箱を置きます（`ROOM_BOXES`） |
 | `reset()` | home姿勢に戻し、時刻と速度を0にします |
 | `get_pose()`, `get_state()`, `get_joint_positions()` | 状態のコピーを返します。戻り値を変更してもシミュレータの状態には影響しません |
 | `stand()` | physicsモードで、homeの関節角をPD制御の目標にします。倒れた状態からの復帰には使えません |
@@ -47,6 +47,24 @@ IMUには、Menagerieモデルに追加したMuJoCoのgyroとaccelerometerを使
 
 `visualization.plot_planar_motion(states, path)` は、上から見た軌跡と、位置・yawの時間変化を画像に保存します。yawは±πの境界でグラフが飛ばないよう、連続した角度に直して描きます。`examples/06_replay.py` では平面移動のCSVからx・y・yawを読み、記録の間を補間して再生します。高さや関節角、物理モードの接触動作は再生しません。
 
+## ROS 2との接続
+
+`go2_seminar.ros.sim_bridge` は、kinematicモードのシミュレータをTurtleBot3 Burgerに見立ててROS 2に接続するノードです。rclpyが必要なので、`pixi.toml` で定義したROS環境（ROS 2 Jazzy、Cyclone DDS）で動かします。`.venv` では読み込めません。
+
+| トピック | 型 | 内容 |
+|---|---|---|
+| `/cmd_vel`（購読） | `geometry_msgs/TwistStamped` | 前進速度 `linear.x` と旋回速度 `angular.z`。`--twist` で `Twist` に変更できます。0.5秒途切れると停止します |
+| `/odom` | `nav_msgs/Odometry` | `odom` 座標系での位置・向き・速度。50 Hz |
+| `/scan` | `sensor_msgs/LaserScan` | 360本の水平レイ。`angle_min=0`、反時計回り、0.12〜3.5 m、5 Hz。`base_scan` 座標系 |
+| `/tf`、`/tf_static` | `tf2_msgs/TFMessage` | `odom → base_link` と `base_link → base_scan` |
+| `/sim/ground_truth` | `geometry_msgs/PoseStamped` | 誤差のない真の位置。評価用で、実機にはありません |
+
+差動二輪として扱うため、横方向の速度は常に0です。速度の上限は実機に合わせた0.22 m/sと、教材の上限である1.5 rad/sです。
+
+オドメトリは指令速度を積分して求めます。`--odom-linear-scale`、`--odom-angular-scale`、`--odom-angular-bias`、`--odom-noise` で系統的なずれや雑音を加えられます。既定ではすべて誤差なしで、`/odom` と `/sim/ground_truth` は一致します。距離は `get_ranges()` と同じく胴体原点からのレイで求めており、`base_scan` の取り付け位置のずれは再現していません。`--scan-noise` で距離に雑音を加えられます。
+
+実機のTurtleBot3 Burgerでは、ROBOTISの `turtlebot3_bringup` が同じ名前のトピックを提供します。学生のノードは、接続先を変えるだけで実機でも動く想定です。実機には `/sim/ground_truth` がない点と、LiDARの雑音や欠測がある点が異なります。
+
 ## 実習を組み合わせるには
 
 week01の `sequence.py` では、この教材用の `Action` と `SequenceController` を使います。`Action("名前", seconds=2, vx=0.2)` のように一定時間の速度指令を記述し、`SequenceController(actions, repeat=4)` を `runtime.run` の `control` に渡すと順に実行できます。指定しなかった速度は0、動作の時間は20 msの正の整数倍です。動作列の終了後は停止します。`repeat` は現在の位置・向きを保ったまま動作列を繰り返します。シミュレーションを途中から使う場合は、生成時に `start_time=robot.time` も指定します。
@@ -55,4 +73,4 @@ week02の座標変換、week03のノイズ生成、week04の状態遷移を、�
 
 week05の観測点をweek06の地図に載せるには、座標系と解像度をそろえる必要があります。機体の大きさを考慮した衝突判定は、経路計画の側に追加してください。さらにweek07を組み合わせる場合は、推定した位置を経路計画に渡し、シミュレータの真の位置は評価に使います。
 
-歩行を扱うには、別途、動作確認済みの歩行制御器が必要です。制御器を追加する際は、速度指令の受け渡しに加え、停止の動作、遅延、速度などの制限も確認してください。この教材には学習済みモデル、ROS、通信処理、実機用コマンドは含まれておらず、そのままUnitree実機を制御することはできません。
+歩行を扱うには、別途、動作確認済みの歩行制御器が必要です。制御器を追加する際は、速度指令の受け渡しに加え、停止の動作、遅延、速度などの制限も確認してください。この教材には学習済みモデルや歩行制御器は含まれておらず、Unitree実機を制御することはできません。ROS 2との接続は上記の橋渡しノードで、TurtleBot3 Burgerと同じトピックを使います。

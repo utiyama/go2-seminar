@@ -21,6 +21,18 @@ def finite_vector(value, size: int, name: str) -> np.ndarray:
     return result
 
 
+# Room used by obstacles="room": 4 m x 3 m, x in [-1, 3], y in [-1.5, 1.5], robot at origin.
+# (name, center xyz [m], half sizes xyz [m])
+ROOM_BOXES = (
+    ("room_wall_x_max", [3.0, 0.0, 0.25], [0.05, 1.55, 0.25]),
+    ("room_wall_x_min", [-1.0, 0.0, 0.25], [0.05, 1.55, 0.25]),
+    ("room_wall_y_max", [1.0, 1.5, 0.25], [2.05, 0.05, 0.25]),
+    ("room_wall_y_min", [1.0, -1.5, 0.25], [2.05, 0.05, 0.25]),
+    ("room_box_a", [0.6, 0.9, 0.15], [0.15, 0.15, 0.15]),
+    ("room_box_b", [2.3, -0.8, 0.15], [0.2, 0.1, 0.15]),
+)
+
+
 @dataclass(frozen=True)
 class Pose:
     position: np.ndarray
@@ -37,9 +49,13 @@ class Go2Sim:
     """
 
     def __init__(self, mode: Literal["physics", "kinematic"] = "physics",
-                 *, obstacles: bool = False, cache_dir: str | Path | None = None):
+                 *, obstacles: bool | str = False, cache_dir: str | Path | None = None):
+        """obstacles: False, True (one box 1.4 m ahead) or "room" (that box plus
+        walls and two more boxes, for LiDAR / mapping exercises)."""
         if mode not in ("physics", "kinematic"):
             raise ValueError("mode must be 'physics' or 'kinematic'")
+        if obstacles not in (False, True, "room"):
+            raise ValueError("obstacles must be False, True or 'room'")
         self.mode = mode
         # Local cache makes a pre-warmed repository folder easy to carry to class.
         cache_path = cache_dir or os.environ.get("MENAGERIE_CACHE_DIR", ".cache/menagerie")
@@ -54,6 +70,10 @@ class Go2Sim:
             spec.worldbody.add_geom(name="classroom_wall", type=mujoco.mjtGeom.mjGEOM_BOX,
                                     pos=[1.5, 0, 0.25], size=[0.1, 0.6, 0.25],
                                     rgba=[0.8, 0.25, 0.1, 1], group=0)
+        if obstacles == "room":
+            for name, pos, size in ROOM_BOXES:
+                spec.worldbody.add_geom(name=name, type=mujoco.mjtGeom.mjGEOM_BOX, pos=pos,
+                                        size=size, rgba=[0.55, 0.55, 0.6, 1], group=0)
         self.model = spec.compile()
         self.data = mujoco.MjData(self.model)
         self.base_id = self.model.body("base").id

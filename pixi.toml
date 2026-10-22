@@ -1,0 +1,33 @@
+# ROS 2 Jazzy を使う回（week03以降）の環境。RoboStack の conda パッケージを使います。
+# 導入は scripts/install-ros.sh / install-ros.ps1、利用は `pixi shell` です。
+[workspace]
+name = "go2-seminar-ros"
+channels = ["https://prefix.dev/robostack-jazzy", "conda-forge"]
+platforms = ["osx-arm64", "osx-64", "win-64", "linux-64"]
+
+[dependencies]
+python = "3.11.*"
+ros-jazzy-desktop = "*"
+ros-jazzy-rmw-cyclonedds-cpp = "*"
+ros-jazzy-teleop-twist-keyboard = "*"
+ros-jazzy-slam-toolbox = "*"
+numpy = "*"
+matplotlib = "*"
+pytest = "8.*"
+
+[pypi-dependencies]
+mujoco = "==3.3.7"
+mujoco-menagerie = "==2026.9.0"
+go2-seminar = { path = ".", editable = true }
+
+[activation.env]
+# 授業では Cyclone DDS とドメインID 30 に統一します。ロボット側も同じ設定です。
+RMW_IMPLEMENTATION = "rmw_cyclonedds_cpp"
+ROS_DOMAIN_ID = "30"
+# 既定では自分のPC内だけで通信します。実機を動かすときは SUBNET に切り替えます（docs/setup-ros.md）。
+ROS_AUTOMATIC_DISCOVERY_RANGE = "LOCALHOST"
+PYTHONUTF8 = "1"
+
+[tasks]
+check = "python scripts/check_ros.py --output results/ros-environment.json"
+test = "pytest"

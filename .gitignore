@@ -32,3 +32,4 @@ MUJOCO_LOG.TXT
 
 # Textbook PDFs are shared directly.
 *.[pP][dD][fF]
+.pixi/

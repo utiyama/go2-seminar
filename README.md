@@ -2,7 +2,7 @@
 
 このゼミでは『Introduction to Autonomous Robots』を輪読し、Pythonでロボットの動きを確かめます。実習にはMuJoCoとUnitree Go2のモデルを使います。
 
-10月2日は各自のWindows・Macに実習環境を用意します。Go2を画面に表示し、位置や姿勢を読み取ったり、簡単な操作を試したりします。その後、7回にわたって座標系、センサ、経路計画などを扱います。
+10月2日は各自のWindows・Macに実習環境を用意します。Go2を画面に表示し、位置や姿勢を読み取ったり、簡単な操作を試したりします。その後、7回にわたって座標系、センサ、経路計画などを扱います。第3回からはROS 2を使い、実機のTurtleBot3 Burgerを動かすことを目指します。
 
 ![MuJoCo上のGo2](docs/images/go2.png)
 
@@ -35,13 +35,15 @@ Gitの準備が間に合わない場合は、GitHubの **Code → Download ZIP**
 
 Python 3.11の64 bit版を使います。対応するPCはWindows x86-64とMac（Apple Silicon / Intel）です。Windows ARMは対象外です。
 
-必要なソフトはセットアップ手順にまとめています。ROS 2やUnitree SDK、専用GPU、実機は使いません。初回はPyPIとGitHubからファイルを取得するため、インターネット接続が必要です。画面表示にはOpenGL対応の描画環境が必要です。
+必要なソフトはセットアップ手順にまとめています。Unitree SDKや専用GPUは使いません。初回はPyPIとGitHubからファイルを取得するため、インターネット接続が必要です。画面表示にはOpenGL対応の描画環境が必要です。
 
-Windows・macOS・Linuxで、セットアップと画面を表示しない実行を確認しています。画面表示は各自のPCでも確認してください。WindowsとIntel Macの実機での画面表示は未確認です。
+第3回からはROS 2 Jazzyも使います。[ROS 2環境のセットアップ](docs/setup-ros.md)に沿って、第3回の授業前に各自のPCで準備してください。実機はTurtleBot3 Burgerを1台使い、授業中に順番に動かします。
+
+Windows・macOS・Linuxで、セットアップと画面を表示しない実行を確認しています。画面表示は各自のPCでも確認してください。WindowsとIntel Macの実機での画面表示は未確認です。ROS 2環境は、Apple Silicon Macで導入と通信を確認しています。
 
 ## 日程
 
-日付は2026年です。各回のページに読む範囲と実習の説明があります。
+日付は2026年です。各回のページに読む範囲と実習の説明があります。第3回以降はROS 2環境で実習します。
 
 | 回 | 日付 | 内容 |
 |---|---|---|
@@ -77,6 +79,8 @@ robot.stop()
 
 物理モードで関節を動かすときは `set_joint_targets()` を使います。座標系や単位、各関数の説明は[APIと設計](docs/architecture.md)を参照してください。
 
+第3回からは、平面移動モードのシミュレータをTurtleBot3 Burgerに見立ててROS 2に接続します。橋渡しノードが `/scan` と `/odom` を配信し、`/cmd_vel` を受け取るので、学生が書いたノードは実機でもそのまま動かせます。
+
 ## 主なファイル
 
 | フォルダ | 内容 |
@@ -87,6 +91,7 @@ robot.stop()
 | `docs/` | セットアップ手順、ゼミの進め方、APIの説明 |
 | `materials/textbook/` | 教科書の案内と読む範囲 |
 | `src/go2_seminar/` | シミュレータを操作する共通コード |
+| `pixi.toml` | 第3回以降に使うROS 2環境の定義 |
 
 エラーが出たときは[トラブル対処](docs/troubleshooting.md)を参照してください。
 

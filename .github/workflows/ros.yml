@@ -39,8 +39,7 @@ jobs:
       - uses: prefix-dev/setup-pixi@v0.11.2
         with:
           pixi-version: v0.82.1
-          run-install: false
-          cache: true
+          cache: true   # setup-pixi installs the environment; the student scripts then re-run pixi install as a no-op
       - name: Install and check (Windows student script)
         if: runner.os == 'Windows'
         shell: powershell

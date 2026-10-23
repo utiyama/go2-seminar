@@ -39,7 +39,7 @@ Python 3.11の64 bit版を使います。対応するPCはWindows x86-64とMac�
 
 第3回からはROS 2 Jazzyも使います。[ROS 2環境のセットアップ](docs/setup-ros.md)に沿って、第3回の授業前に各自のPCで準備してください。実機はTurtleBot3 Burgerを1台使い、授業中に順番に動かします。
 
-Windows・macOS・Linuxで、セットアップと画面を表示しない実行を確認しています。画面表示は各自のPCでも確認してください。WindowsとIntel Macの実機での画面表示は未確認です。ROS 2環境は、Apple Silicon Macで導入と通信を確認しています。
+Windows・macOS・Linuxで、セットアップと画面を表示しない実行を確認しています。画面表示は各自のPCでも確認してください。WindowsとIntel Macの実機での画面表示は未確認です。ROS 2環境は、Apple Silicon Macと学生のWindows PCで導入を確認しています。
 
 ## 日程
 

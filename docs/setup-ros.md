@@ -11,6 +11,7 @@
 - 空き容量が5 GB以上あること。ダウンロードは数GB、展開後の大きさは約3.5 GBです。
 - 所要時間は回線によって10〜30分です。途中で止まった場合は、同じコマンドをもう一度実行すると続きから進みます。
 - Windowsでは、教材のフォルダは `C:\Users\名前\go2-seminar` のように短いパスに置いてください。深い場所にあると、ファイルのパスが長すぎて失敗することがあります。
+- **OneDriveの中（デスクトップやドキュメントが同期されている場合を含む）には置かないでください。** ROS環境は約3.5 GB・数万ファイルあり、同期の負荷で環境が壊れます。すでにOneDriveの中にある場合は、フォルダごと `C:\Users\名前\go2-seminar` へ移動してから続けてください。Macでも、iCloud Driveの中は避けてください。
 
 ## 1. インストール
 
@@ -28,7 +29,7 @@ Windows:
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-ros.ps1
 ```
 
-このスクリプトは、パッケージ管理ツールのpixiをホームフォルダの `.pixi` に入れ、教材フォルダ内の `.pixi` にROS 2 Jazzy一式、RViz2、MuJoCoを入れます。最後に `"status": "PASS"` と「ROS環境の準備完了」が出れば完了です。確認結果は `results/ros-environment.json` に保存されます。
+このスクリプトは、パッケージ管理ツールのpixiをホームフォルダの `.pixi` に入れ（Windowsでは既に `winget install prefix-dev.pixi` で入れてあっても構いません）、教材フォルダ内の `.pixi` にROS 2 Jazzy一式、RViz2、MuJoCoを入れます。最後に `"status": "PASS"` と「ROS環境の準備完了」が出れば完了です。確認結果は `results/ros-environment.json` に保存されます。
 
 初めてpixiを入れた場合は、ターミナルまたはPowerShellを一度閉じて開き直してください。
 

@@ -65,6 +65,8 @@ git --version
 | 症状 | 対処 |
 |---|---|
 | `pixi` が見つからない | インストール直後はターミナルを開き直してください。それでも見つからない場合、Macは `~/.pixi/bin/pixi`、Windowsは `%USERPROFILE%\.pixi\bin\pixi.exe` を直接実行するか、[セットアップ](setup-ros.md)のスクリプトをもう一度実行します |
+| Windowsで `変数 '$ZIP_FILE' は、設定されていないために取得できません` | 古い導入スクリプトがpixiのインストーラを呼び、ダウンロードに失敗したときの表示です。`git pull --ff-only` で教材を更新してから、導入をやり直してください。それでもpixiが入らない場合は、`winget install prefix-dev.pixi` でpixiを入れ、PowerShellを開き直してから導入スクリプトを実行します |
+| 教材のフォルダがOneDriveやiCloud Driveの中にある | 同期によりROS環境が壊れることがあります。フォルダごと `C:\Users\名前\go2-seminar` のような同期対象外の場所へ移動し、`.pixi` を削除してから導入をやり直してください |
 | ダウンロード中に止まる、`connection error` | 同じインストールコマンドをもう一度実行してください。取得済みの部分は再利用されます。ダウンロードは数GBあるので、授業前に済ませてください |
 | Windowsで `path too long` などパスに関するエラー | 教材フォルダを `C:\Users\名前\go2-seminar` のような短い場所へ移し、`.pixi` を削除してからやり直します |
 | `ros2` コマンドが見つからない | `pixi shell` でROS環境に入ってから実行してください。ターミナルごとに必要です |

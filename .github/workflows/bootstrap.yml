@@ -1,0 +1,50 @@
+name: Student ROS bootstrap
+# Runs the student install scripts on clean runners (no pre-installed pixi, no cache),
+# exactly as a student would. Slower than ros.yml, so it only runs when these files change.
+on:
+  push:
+    paths:
+      - scripts/install-ros.*
+      - scripts/check_ros.py
+      - scripts/ros_env.*
+      - scripts/cyclonedds*.xml
+      - pixi.toml
+      - pixi.lock
+      - .github/workflows/bootstrap.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bootstrap:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    env:
+      PYTHONUTF8: "1"
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@v4
+      - name: Student script (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-ros.ps1
+      - name: Student script (macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: bash scripts/install-ros.sh
+      - name: pixi is on PATH in a new shell (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $env:Path = [Environment]::GetEnvironmentVariable("Path", "User") + ";" + $env:Path
+          pixi --version
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bootstrap-${{ matrix.os }}
+          path: results/ros-environment.json

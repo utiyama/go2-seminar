@@ -7,13 +7,11 @@ ROS環境で実行します。先に sim_bridge（または実機）を動かし
 import argparse
 import math
 from pathlib import Path
-import sys
 import time
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "week03"))
-from scan_front import sector_min  # noqa: E402  week03で使った関数
+from go2_seminar.ros.scan import sector_min  # 第3回で使った扇形の最小距離
 
 
 class Controller:

@@ -5,25 +5,12 @@ ROS環境で実行します。先に sim_bridge（または実機）を動かし
     python exercises/week03/scan_front.py --topic /scan_noisy --output results/week03-scan-noisy
 """
 import argparse
-import math
 from pathlib import Path
 import time
 
 import numpy as np
 
-
-def sector_min(scan, center_deg, half_deg):
-    """center_deg を中心に ±half_deg の範囲で最小距離 [m] を返す。測定なしなら inf。
-
-    LaserScan の ranges は angle_min から angle_increment 刻みで並び、
-    TurtleBot3 では 0 度が前方、90 度が左（反時計回り）です。
-    """
-    ranges = np.asarray(scan.ranges, dtype=float)
-    angles = scan.angle_min + np.arange(len(ranges)) * scan.angle_increment
-    offset = np.degrees(np.angle(np.exp(1j * (angles - math.radians(center_deg)))))  # -180..180
-    selected = ranges[np.abs(offset) <= half_deg]
-    selected = selected[np.isfinite(selected) & (selected >= scan.range_min)]
-    return float(selected.min()) if selected.size else math.inf
+from go2_seminar.ros.scan import sector_min  # 扇形の最小距離。定義は src/go2_seminar/ros/scan.py
 
 
 def main(argv=None):

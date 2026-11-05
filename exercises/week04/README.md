@@ -44,7 +44,7 @@ rviz2 -d exercises/ros/seminar.rviz
 | `front` | 前方±15度で最も近い物までの距離 [m]。何もなければ `inf` |
 | `left`、`right` | 左（90度）と右（270度）の同じ値 |
 
-距離は第3回の `sector_min()` で計算しています。`inf` は「3.5 m以内に何もない」という意味で、`front < 0.5` のような比較は常に偽になります。
+距離は第3回でも使った `sector_min()`（`src/go2_seminar/ros/scan.py`）で計算しています。第3回で `scan_front.py` を編集していても、第4回には影響しません。`inf` は「3.5 m以内に何もない」という意味で、`front < 0.5` のような比較は常に偽になります。
 
 ## 実習1　まず動かす
 

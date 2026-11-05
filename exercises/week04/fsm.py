@@ -17,10 +17,15 @@ from scan_front import sector_min  # noqa: E402  week03で使った関数
 
 
 class Controller:
-    """状態と、状態ごとの速度指令を決める。
+    """状態（FORWARD / STOP / TURN）を持ち、状態ごとの速度指令を決める。
 
-    状態: FORWARD（前進）、STOP（停止）
-    TODO: TURN（その場で旋回）を追加し、一定時間たったら FORWARD に戻してください。
+    使う変数と関数:
+      self.state            いまの状態の名前（文字列）
+      self.state_since      いまの状態に入った時刻 [s]
+      self.transition(名前, t)  状態を切り替え、state_since に t を記録する
+      self.stop_distance    停止する前方距離 [m]（--stop-distance）
+      self.turn_rate        旋回速度 [rad/s]（--turn-rate）。正で左、負で右
+      self.turn_seconds     旋回を続ける時間 [s]（--turn-seconds）
     """
 
     def __init__(self, *, speed, stop_distance, turn_rate, turn_seconds):
@@ -30,23 +35,45 @@ class Controller:
         self.turn_seconds = turn_seconds
         self.state = "FORWARD"
         self.state_since = 0.0
+        self.front = self.left = self.right = math.inf
 
     def update(self, t, front, left, right):
-        """時刻 t [s] と各方向の最小距離 [m] から、新しい状態を決めて返す。"""
+        """0.1秒ごとに呼ばれる。t は開始からの秒数、front/left/right は各方向の最小距離 [m]。
+
+        ここで「いつ状態を切り替えるか」を決め、新しい状態を返す。
+        """
+        self.front, self.left, self.right = front, left, right
+
         if self.state == "FORWARD" and front < self.stop_distance:
             self.transition("STOP", t)
-        # TODO: STOP から TURN へ、TURN から一定時間後に FORWARD へ遷移させてください。
+
+        # --- 穴埋め1（実習2）: STOP になったら TURN に移る ---
+        # 下の2行の先頭の「# 」を消し、??? を状態の名前に置き換えてください。
+        # elif self.state == "STOP":
+        #     self.transition(???, t)
+
+        # --- 穴埋め2（実習2）: TURN を turn_seconds だけ続けたら FORWARD に戻る ---
+        # t - self.state_since は、いまの状態に入ってからの秒数です。
+        # elif self.state == "TURN" and t - self.state_since >= ???:
+        #     self.transition("FORWARD", t)
+
         return self.state
 
     def command(self):
-        """現在の状態に対応する (前進速度 [m/s], 旋回速度 [rad/s]) を返す。"""
+        """現在の状態に対応する (前進速度 [m/s], 旋回速度 [rad/s]) を返す。0.1秒ごとに呼ばれる。"""
         if self.state == "FORWARD":
-            return self.speed, 0.0
+            return self.speed, 0.0   # 発展（壁沿い）: 0.0 を左の距離から決めた旋回速度に置き換える
         if self.state == "TURN":
             return 0.0, self.turn_rate
-        return 0.0, 0.0
+        return 0.0, 0.0              # STOP
 
     def transition(self, new_state, t):
+        """状態を new_state に変え、入った時刻を記録する。"""
+        # --- 穴埋め3（実習4）: TURN に入るとき、空いている側へ回る向きを決める ---
+        # self.left と self.right は update() で保存した左右の最小距離です。
+        # 左のほうが広ければ正（左旋回）、右のほうが広ければ負（右旋回）にします。
+        # if new_state == "TURN":
+        #     self.turn_rate = abs(self.turn_rate) if ??? else -abs(self.turn_rate)
         self.state = new_state
         self.state_since = t
 

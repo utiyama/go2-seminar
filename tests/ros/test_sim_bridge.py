@@ -74,6 +74,14 @@ def test_bridge_publishes_scan_and_moves_on_cmd_vel():
         while time.monotonic() - t0 < 2.5:
             rclpy.spin_once(node, timeout_sec=0.05)
         assert abs(odoms[-1].pose.pose.position.x - x_after_stop) < 1e-6
+        # /sim/reset moves the robot (and odometry) back to the start pose.
+        from std_msgs.msg import Empty
+        reset_pub = node.create_publisher(Empty, "sim/reset", 10)
+        t0 = time.monotonic()
+        while time.monotonic() - t0 < 5.0 and abs(odoms[-1].pose.pose.position.x) > 1e-6:
+            reset_pub.publish(Empty())
+            rclpy.spin_once(node, timeout_sec=0.2)
+        assert abs(odoms[-1].pose.pose.position.x) < 1e-6
         node.destroy_node()
     finally:
         rclpy.shutdown()

@@ -50,7 +50,7 @@ ros2 topic echo /scan --once
 ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -p stamped:=true
 ```
 
-`i` で前進、`,` で後退、`j` と `l` でその場旋回、`k` で停止です。このノードが `/cmd_vel` に `TwistStamped` を配信し、橋渡しノードが受け取ります。速度の上限は実機と同じ0.22 m/sです。動かしながら、RViz2の点群と `ros2 topic echo /odom` の位置を見てください。キーを押すのをやめて0.5秒たつと止まります。
+`i` で前進、`,` で後退、`j` と `l` でその場旋回、`k` で停止です。このノードが `/cmd_vel` に `TwistStamped` を配信し、橋渡しノードが受け取ります。速度の上限は実機と同じ0.22 m/sです。動かしながら、RViz2の点群と `ros2 topic echo /odom` の位置を見てください。キーを押すのをやめて0.5秒たつと止まります。ロボットを出発点に戻すには、別のターミナルで `ros2 topic pub --once /sim/reset std_msgs/msg/Empty "{}"` を実行します。
 
 ## 実習1　前方の距離を読む
 

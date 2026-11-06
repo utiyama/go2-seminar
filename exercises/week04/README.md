@@ -57,9 +57,17 @@ python exercises/week04/fsm.py
 停止距離は0.5 mなのに、表示された距離は0.5 mより少し小さいはずです。次の2つで比べてください。
 
 ```text
-python exercises/week04/fsm.py --speed 0.05
-python exercises/week04/fsm.py --speed 0.22
+python exercises/week04/fsm.py --reset --speed 0.05
+python exercises/week04/fsm.py --reset --speed 0.22
 ```
+
+橋渡しノードはロボットの位置を覚えているので、何もしないと前回止まった場所（箱の手前）から始まり、すぐに `STOP` になって動きません。`--reset` を付けると、開始前にロボットを出発点に戻します。ノードを使わずに戻すこともできます。
+
+```text
+ros2 topic pub --once /sim/reset std_msgs/msg/Empty "{}"
+```
+
+実機には「出発点に戻す」はないので、手で運びます。
 
 scanは0.2秒に1回しか届きません。速いほど、検出してから止まるまでに進む距離が増えます。
 
@@ -98,8 +106,8 @@ t=  6.6 s  TURN → FORWARD  前方 1.45 m
 旋回角度は `--turn-rate`（rad/s）×`--turn-seconds`（秒）です。既定は π/4 × 2 秒 = 90度です。
 
 ```text
-python exercises/week04/fsm.py --turn-seconds 1
-python exercises/week04/fsm.py --turn-seconds 4
+python exercises/week04/fsm.py --reset --turn-seconds 1
+python exercises/week04/fsm.py --reset --turn-seconds 4
 ```
 
 1秒なら45度、4秒なら180度です。実行前に、ロボットがどこで止まり、その後どこへ向かうかを予想してください。RViz2の軌跡と `results/week04-fsm.png` の右側の図で比べます。保存名を変えて残すには `--output results/week04-turn1` のように指定します。

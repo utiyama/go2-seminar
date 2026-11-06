@@ -3,6 +3,8 @@
 購読: /cmd_vel (geometry_msgs/TwistStamped、--twist で Twist)
 配信: /odom (nav_msgs/Odometry)、/scan (sensor_msgs/LaserScan)、/tf、/tf_static、
       /sim/ground_truth (geometry_msgs/PoseStamped、誤差のない真の位置)
+購読: /sim/reset (std_msgs/Empty) を受けると、ロボットとオドメトリを開始位置に戻します。
+      ros2 topic pub --once /sim/reset std_msgs/msg/Empty "{}"
 
 差動二輪として動かすため、横方向の速度は無視します。速度の上限はBurgerに合わせて
 0.22 m/s、旋回は教材の上限 1.5 rad/s です。脚は歩かず、胴体の位置だけを更新します。
@@ -49,6 +51,10 @@ class OdometryModel:
         self.x = self.y = self.yaw = 0.0
         self.v = self.w = 0.0
 
+    def reset(self):
+        self.x = self.y = self.yaw = 0.0
+        self.v = self.w = 0.0
+
     def integrate(self, v_cmd, w_cmd, dt):
         v = v_cmd * self.linear_scale
         w = w_cmd * self.angular_scale + (self.angular_bias if (v_cmd or w_cmd) else 0.0)
@@ -88,6 +94,7 @@ def main(argv=None):
     from rclpy.node import Node
     from rclpy.qos import qos_profile_sensor_data
     from geometry_msgs.msg import PoseStamped, TransformStamped, Twist, TwistStamped
+    from std_msgs.msg import Empty
     from nav_msgs.msg import Odometry
     from sensor_msgs.msg import LaserScan
     from tf2_ros import StaticTransformBroadcaster, TransformBroadcaster
@@ -103,6 +110,7 @@ def main(argv=None):
     rclpy.init()
     node = Node("sim_bridge")
     command = {"v": 0.0, "w": 0.0, "stamp": None}
+    handle = None  # MuJoCo viewer handle, created below when --viewer is given
 
     def on_twist(linear_x, angular_z):
         if not (math.isfinite(linear_x) and math.isfinite(angular_z)):
@@ -116,6 +124,15 @@ def main(argv=None):
         node.create_subscription(Twist, "cmd_vel", lambda m: on_twist(m.linear.x, m.angular.z), 10)
     else:
         node.create_subscription(TwistStamped, "cmd_vel", lambda m: on_twist(m.twist.linear.x, m.twist.angular.z), 10)
+    def on_reset(_msg):
+        with handle.lock() if handle else _NullContext():
+            sim.set_planar_pose(args.start[0], args.start[1], math.radians(args.start[2]))
+        odom_model.reset()
+        command["v"] = command["w"] = 0.0
+        command["stamp"] = None
+        node.get_logger().info("reset: ロボットとオドメトリを開始位置に戻しました")
+
+    node.create_subscription(Empty, "sim/reset", on_reset, 10)
     odom_pub = node.create_publisher(Odometry, "odom", 10)
     scan_pub = node.create_publisher(LaserScan, "scan", qos_profile_sensor_data)
     truth_pub = node.create_publisher(PoseStamped, "sim/ground_truth", 10)
@@ -128,7 +145,6 @@ def main(argv=None):
     static.transform.rotation.w = 1.0
     static_pub.sendTransform(static)
 
-    handle = None
     if args.viewer and not args.headless:
         import mujoco.viewer
         try:

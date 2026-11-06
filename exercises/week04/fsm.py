@@ -85,6 +85,7 @@ def main(argv=None):
     parser.add_argument("--half-angle", type=float, default=15.0, help="距離を見る扇形の半分の角度 [度]")
     parser.add_argument("--output", type=Path, default=Path("results/week04-fsm"), help="保存先の名前（拡張子なし）")
     parser.add_argument("--seconds", type=float, default=None, help="指定秒数で終了（省略時はCtrl+Cまで）")
+    parser.add_argument("--reset", action="store_true", help="開始前にシミュレータの位置を出発点に戻す（実機では何も起きない）")
     args = parser.parse_args(argv)
     if not 0 < args.speed <= 0.22 or args.stop_distance <= 0 or args.turn_seconds <= 0:
         parser.error("--speed は0より大きく0.22以下、--stop-distance と --turn-seconds は正にしてください。")
@@ -105,6 +106,15 @@ def main(argv=None):
     rclpy.init()
     node = rclpy.create_node("fsm")
     publisher = node.create_publisher(TwistStamped, "cmd_vel", 10)
+    if args.reset:
+        from std_msgs.msg import Empty
+        reset_pub = node.create_publisher(Empty, "sim/reset", 10)
+        for _ in range(10):  # 橋渡しノードがこのノードを見つけるまで少し待つ
+            rclpy.spin_once(node, timeout_sec=0.1)
+        reset_pub.publish(Empty())
+        for _ in range(5):
+            rclpy.spin_once(node, timeout_sec=0.1)
+        print("シミュレータを出発点に戻しました。", flush=True)
 
     def on_scan(scan):
         distances["front"] = sector_min(scan, 0.0, args.half_angle)

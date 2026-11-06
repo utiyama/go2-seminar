@@ -58,6 +58,7 @@ IMUには、Menagerieモデルに追加したMuJoCoのgyroとaccelerometerを使
 | `/scan` | `sensor_msgs/LaserScan` | 360本の水平レイ。`angle_min=0`、反時計回り、0.12〜3.5 m、5 Hz。`base_scan` 座標系 |
 | `/tf`、`/tf_static` | `tf2_msgs/TFMessage` | `odom → base_link` と `base_link → base_scan` |
 | `/sim/ground_truth` | `geometry_msgs/PoseStamped` | 誤差のない真の位置。評価用で、実機にはありません |
+| `/sim/reset`（購読） | `std_msgs/Empty` | ロボットとオドメトリを開始位置（`--start`）に戻します。実機にはありません |
 
 差動二輪として扱うため、横方向の速度は常に0です。速度の上限は実機に合わせた0.22 m/sと、教材の上限である1.5 rad/sです。
 

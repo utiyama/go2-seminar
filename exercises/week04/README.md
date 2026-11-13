@@ -135,12 +135,14 @@ python scripts/launch.py -m go2_seminar.ros.sim_bridge --viewer --start 0 -1 0
 
 ```python
         if self.state == "FORWARD":
+            if self.left > 1.0:              # 左に壁がない（inf も含む）: まっすぐ進む
+                return self.speed, 0.0
             error = self.left - 0.5          # 正なら壁から遠い、負なら近い
-            w = max(-0.5, min(0.5, 1.0 * error))
+            w = max(-0.3, min(0.3, 1.0 * error))
             return self.speed, w
 ```
 
-`error` に掛ける係数（1.0）を大きくすると、壁に近づく・離れるを繰り返して蛇行します。左に壁がないとき（`self.left` が `inf`）にどうなるかも確かめてください。
+`error` に掛ける係数（1.0）を大きくすると、壁に近づく・離れるを繰り返して蛇行します。最初の2行を外したり、旋回速度の上限（0.3）を0.5にしたりすると、壁に近づく前にその場で円を描き続けます。旋回半径（速度 ÷ 旋回速度）と壁までの距離を比べて、理由を考えてください。
 
 ## 実機では
 

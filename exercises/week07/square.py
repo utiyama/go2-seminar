@@ -6,6 +6,7 @@ ROS環境で実行します。先に sim_bridge（または実機）を動かし
 import argparse
 import math
 from pathlib import Path
+import signal
 import time
 
 import numpy as np
@@ -57,6 +58,7 @@ def main(argv=None):
         parser.error("--speed は0より大きく0.22以下、--side は0.2以上2以下にしてください。")
 
     import rclpy
+    from rclpy.signals import SignalHandlerOptions
     from geometry_msgs.msg import PoseStamped, TwistStamped
     from nav_msgs.msg import Odometry
 
@@ -64,7 +66,8 @@ def main(argv=None):
     odom_path, truth_path = [], []
     started = time.monotonic()
 
-    rclpy.init()
+    # Ctrl+C では rclpy を終了させない。finally で停止指令を送ってから終了する
+    rclpy.init(signal_handler_options=SignalHandlerOptions.NO)
     node = rclpy.create_node("square")
     publisher = node.create_publisher(TwistStamped, "cmd_vel", 10)
 
@@ -142,6 +145,7 @@ def main(argv=None):
     except KeyboardInterrupt:
         finished = False
     finally:
+        signal.signal(signal.SIGINT, signal.SIG_IGN)  # ここから先は Ctrl+C を無視する（終了処理と図の保存を中断させない）
         send(0.0, 0.0)
         rclpy.spin_once(node, timeout_sec=0.1)
         node.destroy_node()

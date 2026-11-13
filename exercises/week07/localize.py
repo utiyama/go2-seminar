@@ -7,6 +7,7 @@ ROS環境で実行します。先に sim_bridge（または実機）を動かし
 import argparse
 import math
 from pathlib import Path
+import signal
 import time
 
 import numpy as np
@@ -100,6 +101,7 @@ def main(argv=None):
         parser.error("--odom-sigma と --scan-sigma は正にしてください。")
 
     import rclpy
+    from rclpy.signals import SignalHandlerOptions
     from rclpy.qos import qos_profile_sensor_data
     from geometry_msgs.msg import PoseStamped, TwistStamped
     from nav_msgs.msg import Odometry
@@ -113,7 +115,8 @@ def main(argv=None):
     rows = []          # [時刻, 実際, オドメトリ, LiDAR, 推定, ゲイン]
     started = time.monotonic()
 
-    rclpy.init()
+    # Ctrl+C では rclpy を終了させない。finally で停止指令を送ってから終了する
+    rclpy.init(signal_handler_options=SignalHandlerOptions.NO)
     node = rclpy.create_node("localize")
     publisher = node.create_publisher(TwistStamped, "cmd_vel", 10)
 
@@ -197,6 +200,7 @@ def main(argv=None):
     except KeyboardInterrupt:
         pass
     finally:
+        signal.signal(signal.SIGINT, signal.SIG_IGN)  # ここから先は Ctrl+C を無視する（終了処理と図の保存を中断させない）
         send(0.0)
         rclpy.spin_once(node, timeout_sec=0.1)
         node.destroy_node()

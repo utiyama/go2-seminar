@@ -8,6 +8,7 @@ import argparse
 import heapq
 import math
 from pathlib import Path
+import signal
 import time
 
 import numpy as np
@@ -190,6 +191,7 @@ def main(argv=None):
         parser.error("--speed は0より大きく0.22以下、--margin は0以上1以下、--weight は0以上にしてください。")
 
     import rclpy
+    from rclpy.signals import SignalHandlerOptions
     from rclpy.qos import DurabilityPolicy, QoSProfile, qos_profile_sensor_data
     from geometry_msgs.msg import PoseStamped, TwistStamped
     from nav_msgs.msg import OccupancyGrid, Odometry
@@ -207,7 +209,8 @@ def main(argv=None):
     state = {"pose": None, "truth": None, "closest": math.inf, "goal": None, "plan": []}
     started = time.monotonic()
 
-    rclpy.init()
+    # Ctrl+C では rclpy を終了させない。finally で停止指令を送ってから終了する
+    rclpy.init(signal_handler_options=SignalHandlerOptions.NO)
     node = rclpy.create_node("planner")
     cmd_pub = node.create_publisher(TwistStamped, "cmd_vel", 10)
     plan_pub = node.create_publisher(PathMsg, "plan", 10)
@@ -374,12 +377,13 @@ def main(argv=None):
     except KeyboardInterrupt:
         pass
     finally:
+        signal.signal(signal.SIGINT, signal.SIG_IGN)  # ここから先は Ctrl+C を無視する（終了処理と図の保存を中断させない）
         send(0.0, 0.0)
         rclpy.spin_once(node, timeout_sec=0.1)
         node.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()
-    if status != 1:
+    if state.get("figure"):  # 図は、計画するたびに保存している
         print(f"保存先: {args.output.with_suffix('.png')}")
     return status
 

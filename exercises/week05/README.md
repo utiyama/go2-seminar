@@ -64,7 +64,7 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -p stamped:=true
 python exercises/week05/mapping.py
 ```
 
-数秒たったら `Ctrl+C` で終了します。`results/week05-map.png` が保存されます。
+数秒たったら `Ctrl+C` を1回押して終了します。`results/week05-map.png` が保存されます。図の保存に数秒かかることがあるので、下の行が出るまで待ってください。途中でもう一度 `Ctrl+C` を押すと、保存されずに終了します。
 
 ```text
 scan 28 回  占有セル 0 個  空きセル 0 個  保存先: results/week05-map.png

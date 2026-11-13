@@ -1,6 +1,8 @@
 """week07 nodes against a bridge with odometry and LiDAR errors. Skipped outside the pixi (ROS) environment."""
+import os
 from pathlib import Path
 import re
+import signal
 import subprocess
 import sys
 import time
@@ -79,3 +81,27 @@ def test_square_returns_by_odometry_but_not_in_truth(bridge, tmp_path):
     assert float(odometry.group(1)) < 0.05 and int(odometry.group(2)) <= 2
     assert float(truth.group(1)) > float(odometry.group(1)) and int(truth.group(2)) > 10
     assert output.with_suffix(".png").stat().st_size > 1000
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="Ctrl+C cannot be sent to a single child process on Windows")
+def test_ctrl_c_pressed_repeatedly_still_saves(bridge, tmp_path):
+    # A second Ctrl+C used to interrupt the figure being saved, and the stop command failed after the first.
+    output = tmp_path / "interrupted"
+    process = subprocess.Popen([sys.executable, "exercises/week07/localize.py", "--output", str(output), "--reset"],
+                               cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+                               env=dict(os.environ, PYTHONUNBUFFERED="1"),
+                               preexec_fn=lambda: signal.signal(signal.SIGINT, signal.SIG_DFL))
+    lines = []
+    while "開始" not in "".join(lines):
+        line = process.stdout.readline()
+        assert line, "".join(lines)
+        lines.append(line)
+    time.sleep(1.5)  # driving
+    for _ in range(4):
+        process.send_signal(signal.SIGINT)
+        time.sleep(0.1)
+    rest, _ = process.communicate(timeout=30)
+    stdout = "".join(lines) + rest
+    assert process.returncode == 0 and "Traceback" not in stdout, stdout
+    assert "保存先" in stdout and output.with_suffix(".png").stat().st_size > 1000
+    assert output.with_suffix(".csv").exists()
